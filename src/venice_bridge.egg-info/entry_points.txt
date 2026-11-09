@@ -1,3 +1,0 @@
-[console_scripts]
-venice-api = venice_bridge.server_api:main
-venice-mcp = venice_bridge.server_mcp:main
