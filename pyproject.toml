@@ -1,0 +1,20 @@
+[project]
+name = "venice-bridge"
+version = "0.1.0"
+description = "Venice AI Bridge via agent-browser (MCP + OpenAI-compatible API)"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.0",
+    "httpx>=0.28.1",
+    "httpx-sse>=0.4.3",
+    "mcp[cli]>=2.3.0",
+    "pydantic>=2.14.3",
+    "python-dotenv>=1.2.4",
+    "uvicorn>=0.30.0",
+]
+
+[project.scripts]
+venice-mcp = "venice_bridge.server_mcp:main"
+venice-api = "venice_bridge.server_api:main"
+

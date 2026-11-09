@@ -1,0 +1,11 @@
+README.md
+pyproject.toml
+src/venice_bridge/__init__.py
+src/venice_bridge/client.py
+src/venice_bridge/server_mcp.py
+src/venice_bridge.egg-info/PKG-INFO
+src/venice_bridge.egg-info/SOURCES.txt
+src/venice_bridge.egg-info/dependency_links.txt
+src/venice_bridge.egg-info/entry_points.txt
+src/venice_bridge.egg-info/requires.txt
+src/venice_bridge.egg-info/top_level.txt
