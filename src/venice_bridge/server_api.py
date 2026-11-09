@@ -5,8 +5,10 @@ Allows standard OpenAI API clients to use Venice AI through the bridge.
 
 from __future__ import annotations
 
+import base64
 import json
 import logging
+import os
 import time
 from typing import Any, Dict, List, Optional
 
@@ -136,6 +138,33 @@ async def chat_completions(req: ChatCompletionRequest):
     if history_messages and history_messages[-1]["role"] == "user":
         user_prompt = history_messages[-1]["content"]
 
+    # Check if request is directly targeted to an image model
+    if req.model in ("chroma", "z-image-turbo", "wai-illu", "fluently-xl"):
+        try:
+            img_res = client.generate_image(prompt=user_prompt or "Digital art", model=req.model)
+            img_bytes = base64.b64decode(img_res["base64"])
+            output_dir = os.path.expanduser("~/Developer/obrunogonzaga/venice-bridge/outputs")
+            os.makedirs(output_dir, exist_ok=True)
+            filename = f"venice_{int(time.time())}_{req.model}.webp"
+            file_path = os.path.join(output_dir, filename)
+            with open(file_path, "wb") as f:
+                f.write(img_bytes)
+            reply_text = f"🎨 Imagem gerada com sucesso via Venice AI Pro ({req.model}):\n\n![{user_prompt}]({file_path})\n\n📁 Arquivo salvo em: `{file_path}`"
+            return {
+                "id": f"chatcmpl-img-{int(time.time()*1000)}",
+                "object": "chat.completion",
+                "created": int(time.time()),
+                "model": req.model,
+                "choices": [{
+                    "index": 0,
+                    "message": {"role": "assistant", "content": reply_text},
+                    "finish_reason": "stop"
+                }],
+                "usage": {"prompt_tokens": 10, "completion_tokens": 30, "total_tokens": 40}
+            }
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Erro ao gerar imagem: {e}")
+
     try:
         res = client.chat(
             prompt=user_prompt or "Hello",
@@ -149,6 +178,28 @@ async def chat_completions(req: ChatCompletionRequest):
         )
 
         reply_text = res["text"]
+
+        # Check if the text model refused because it's an image generation request
+        lower_reply = reply_text.lower()
+        if (
+            ("switch to auto" in lower_reply and "model" in lower_reply)
+            or ("modo auto" in lower_reply and "imagem" in lower_reply)
+            or ("select an image generation model" in lower_reply)
+            or ("modelo de geração de imagem no seletor" in lower_reply)
+        ):
+            try:
+                img_res = client.generate_image(prompt=user_prompt or "Digital art", model="chroma")
+                img_bytes = base64.b64decode(img_res["base64"])
+                output_dir = os.path.expanduser("~/Developer/obrunogonzaga/venice-bridge/outputs")
+                os.makedirs(output_dir, exist_ok=True)
+                filename = f"venice_{int(time.time())}_chroma.webp"
+                file_path = os.path.join(output_dir, filename)
+                with open(file_path, "wb") as f:
+                    f.write(img_bytes)
+                reply_text = f"🎨 Imagem gerada com sucesso via Venice AI Pro (Chroma):\n\n![{user_prompt}]({file_path})\n\n📁 Arquivo salvo em: `{file_path}`"
+            except Exception as img_err:
+                reply_text += f"\n\n*(Tentativa de gerar imagem diretamente falhou: {img_err})*"
+
         cmpl_id = res.get("meta", {}).get("completion_id", f"chatcmpl-{int(time.time()*1000)}")
         created_time = int(time.time())
 
