@@ -148,7 +148,7 @@ class VeniceClient:
     def chat(
         self,
         prompt: str,
-        model: str = "venice-uncensored-1-2",
+        model: str = "deepseek-v4-1-flash-uncensored",
         messages: Optional[List[Dict[str, str]]] = None,
         system_prompt: str = "",
         temperature: float = 0.7,
@@ -159,7 +159,7 @@ class VeniceClient:
         Sends a chat prompt to Venice AI and returns the full assistant response.
         
         :param prompt: User message text (or last message if messages is provided).
-        :param model: Venice modelId (e.g. 'venice-uncensored-1-2', 'deepseek-v4-1-flash-uncensored').
+        :param model: Venice modelId (e.g. 'deepseek-v4-1-flash-uncensored', 'venice-uncensored-1-2').
         :param messages: Optional list of previous chat messages [{'role': 'user'|'assistant', 'content': '...'}].
         :param system_prompt: Optional custom system instruction.
         :param temperature: Sampling temperature (0.0 to 1.0).

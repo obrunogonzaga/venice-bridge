@@ -31,7 +31,7 @@ uv pip install -e .
 ## 🔌 1. Configurando como MCP Server
 
 O servidor MCP expõe 4 ferramentas principais:
-* `venice_chat(prompt, model?, system_prompt?, web_enabled?)`: Conversa com a IA no Venice.
+* `venice_chat(prompt, model?, system_prompt?, web_enabled?)`: Conversa com a IA no Venice (padrão: `deepseek-v4-1-flash-uncensored`).
 * `venice_list_models()`: Lista todos os modelos disponíveis e sinaliza quais são ilimitados no plano Pro.
 * `venice_status()`: Exibe seu perfil autenticado e contagem de rate limits restantes (ex: 9.970+ chats restantes).
 * `venice_generate_image(prompt, model?, width?, height?)`: Gera imagens com modelos Pro gratuitos (`chroma`, `z-image-turbo`, `wai-illu`) e salva em disco.
@@ -78,7 +78,7 @@ O servidor iniciará em `http://127.0.0.1:8000`:
 curl http://127.0.0.1:8000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "venice-uncensored-1-2",
+    "model": "deepseek-v4-1-flash-uncensored",
     "messages": [
       {"role": "user", "content": "Olá Venice!"}
     ]
@@ -87,12 +87,66 @@ curl http://127.0.0.1:8000/v1/chat/completions \
 
 ---
 
+## 💻 3. Usando com o OpenCode
+
+O Venice Bridge pode ser usado no **OpenCode** de duas maneiras complementares:
+
+### Atalho Rápido (Recomendado)
+Foi criado o executável `ocv` (e `opencode-venice`) em `~/.local/bin/ocv`. Ele verifica se a API local está rodando, sobe-a automaticamente em segundo plano caso necessário e inicia o OpenCode com o modelo padrão:
+
+```bash
+ocv                  # Abre o TUI com DeepSeek V4.1 Flash Uncensored
+ocv .                # Abre no diretório atual
+ocv run "mensagem"   # Executa um prompt direto no terminal
+```
+
+### Configuração Manual no OpenCode
+
+1. **Como Modelo de Código (LLM)** em `~/.config/opencode/opencode.json`:
+```json
+"provider": {
+  "venice-local": {
+    "npm": "@ai-sdk/openai-compatible",
+    "name": "Venice Local (Pro)",
+    "options": {
+      "baseURL": "http://127.0.0.1:8000/v1",
+      "apiKey": "local"
+    },
+    "models": {
+      "deepseek-v4-1-flash-uncensored": { "name": "Venice DeepSeek V4.1 Flash", "tool_call": true },
+      "venice-uncensored-1-2": { "name": "Venice Uncensored 1.2", "tool_call": true }
+    }
+  }
+}
+```
+
+2. **Como Ferramenta MCP** em `~/.config/opencode/opencode.jsonc`:
+```jsonc
+"mcp": {
+  "venice-bridge": {
+    "type": "local",
+    "command": ["/opt/homebrew/bin/uv", "--directory", "/Users/bruno/Developer/obrunogonzaga/venice-bridge", "run", "venice-mcp"],
+    "enabled": true
+  }
+}
+```
+
+3. **Credencial de Acesso** em `~/.local/share/opencode/auth.json`:
+```json
+"venice-local": {
+  "type": "api",
+  "key": "local"
+}
+```
+
+---
+
 ## 🧠 Modelos em Destaque
 
 | Modelo | ID | Uso no Plano Pro |
 | :--- | :--- | :--- |
+| **DeepSeek V4.1 Flash Uncensored** | `deepseek-v4-1-flash-uncensored` | **Ilimitado (Padrão)** |
 | **Venice Uncensored 1.2** | `venice-uncensored-1-2` | **Ilimitado (Gratuito)** |
-| **DeepSeek V4.1 Flash Uncensored** | `deepseek-v4-1-flash-uncensored` | **Ilimitado (Gratuito)** |
 | **Auto** | `default` | **Ilimitado (Gratuito)** |
 | **Chroma (Imagem)** | `chroma` | **4.000 imgs/dia (Gratuito)** |
 | **Z-Image Turbo** | `z-image-turbo` | **4.000 imgs/dia (Gratuito)** |

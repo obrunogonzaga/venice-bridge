@@ -37,7 +37,7 @@ class ChatMessage(BaseModel):
 
 
 class ChatCompletionRequest(BaseModel):
-    model: str = "venice-uncensored-1-2"
+    model: str = "deepseek-v4-1-flash-uncensored"
     messages: List[ChatMessage]
     temperature: Optional[float] = 0.7
     top_p: Optional[float] = 0.9

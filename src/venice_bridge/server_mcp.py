@@ -22,7 +22,7 @@ client = VeniceClient()
 @mcp.tool()
 def venice_chat(
     prompt: str,
-    model: str = "venice-uncensored-1-2",
+    model: str = "deepseek-v4-1-flash-uncensored",
     system_prompt: str = "",
     web_enabled: bool = False,
 ) -> str:
@@ -30,8 +30,8 @@ def venice_chat(
     Sends a prompt to Venice AI using the active Pro subscription.
     
     :param prompt: The user prompt or instruction.
-    :param model: Model ID to use. Default is 'venice-uncensored-1-2'.
-                  Another popular free model is 'deepseek-v4-1-flash-uncensored'.
+    :param model: Model ID to use. Default is 'deepseek-v4-1-flash-uncensored'.
+                  Another popular free model is 'venice-uncensored-1-2'.
     :param system_prompt: Optional custom system instructions for the model.
     :param web_enabled: Whether to enable web search grounding.
     :return: The generated response text.
