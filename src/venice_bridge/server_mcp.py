@@ -24,16 +24,18 @@ def venice_chat(
     prompt: str,
     model: str = "deepseek-v4-1-flash-uncensored",
     system_prompt: str = "",
-    web_enabled: bool = False,
+    web_enabled: bool = True,
+    web_scrape_enabled: bool = True,
 ) -> str:
     """
-    Sends a prompt to Venice AI using the active Pro subscription.
+    Sends a prompt to Venice AI using the active Pro subscription with web search and scraping enabled.
     
     :param prompt: The user prompt or instruction.
     :param model: Model ID to use. Default is 'deepseek-v4-1-flash-uncensored'.
                   Another popular free model is 'venice-uncensored-1-2'.
     :param system_prompt: Optional custom system instructions for the model.
-    :param web_enabled: Whether to enable web search grounding.
+    :param web_enabled: Whether to enable web search grounding (default True).
+    :param web_scrape_enabled: Whether to enable live web scraping of URLs (default True).
     :return: The generated response text.
     """
     try:
@@ -42,6 +44,7 @@ def venice_chat(
             model=model,
             system_prompt=system_prompt,
             web_enabled=web_enabled,
+            web_scrape_enabled=web_scrape_enabled,
         )
         return res["text"]
     except VeniceError as e:

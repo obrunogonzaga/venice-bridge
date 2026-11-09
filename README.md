@@ -70,9 +70,10 @@ uv run venice-api
 O servidor iniciará em `http://127.0.0.1:8000`:
 - **Base URL:** `http://127.0.0.1:8000/v1`
 - **Listar Modelos:** `GET /v1/models`
-- **Chat:** `POST /v1/chat/completions`
+- **Chat (com Web Search e Web Scraping automáticos):** `POST /v1/chat/completions`
+- **Geração de Imagens (OpenAI-compatible):** `POST /v1/images/generations`
 
-### Exemplo via cURL:
+### Exemplo de Chat via cURL:
 
 ```bash
 curl http://127.0.0.1:8000/v1/chat/completions \
@@ -80,8 +81,20 @@ curl http://127.0.0.1:8000/v1/chat/completions \
   -d '{
     "model": "deepseek-v4-1-flash-uncensored",
     "messages": [
-      {"role": "user", "content": "Olá Venice!"}
+      {"role": "user", "content": "Quem ganhou o último jogo do Flamengo e qual foi o placar?"}
     ]
+  }'
+```
+
+### Exemplo de Imagem via cURL:
+
+```bash
+curl http://127.0.0.1:8000/v1/images/generations \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "A cute red panda wearing glasses reading a book, digital art",
+    "model": "chroma",
+    "size": "1024x1024"
   }'
 ```
 

@@ -153,7 +153,8 @@ class VeniceClient:
         system_prompt: str = "",
         temperature: float = 0.7,
         top_p: float = 0.9,
-        web_enabled: bool = False,
+        web_enabled: bool = True,
+        web_scrape_enabled: bool = True,
     ) -> Dict[str, Any]:
         """
         Sends a chat prompt to Venice AI and returns the full assistant response.
@@ -164,7 +165,8 @@ class VeniceClient:
         :param system_prompt: Optional custom system instruction.
         :param temperature: Sampling temperature (0.0 to 1.0).
         :param top_p: Top-P sampling.
-        :param web_enabled: Whether to enable web search.
+        :param web_enabled: Whether to enable web search grounding (default True).
+        :param web_scrape_enabled: Whether to enable live web scraping (default True).
         :return: Dict containing 'text', 'model', 'meta'.
         """
         if not messages:
@@ -182,6 +184,7 @@ class VeniceClient:
             "temperature": temperature,
             "topP": top_p,
             "webEnabled": web_enabled,
+            "webScrapeEnabled": web_scrape_enabled,
         })
 
         js = f"""
@@ -206,7 +209,8 @@ class VeniceClient:
                 topP: params.topP,
                 userId: userId,
                 webEnabled: params.webEnabled,
-                webScrapeEnabled: false,
+                webScrapeEnabled: params.webScrapeEnabled,
+                webSearchProviderMode: 'zdr',
                 xSearchEnabled: false
             }};
 
